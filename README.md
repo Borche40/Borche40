@@ -1,4 +1,4 @@
-- 👋 Hallo ich bib Borche40!
+- 👋 Hallo ich bin Borche40!
 - 👀 Softwareentwickler mit Interesse an C# WPF,XAML und MVVM*
 - 🌱 **GitHub und Open-Source-Kollaboration**
 - 💞️ Programmierung : C# .NET,WPF;XAML,MVVM,SQL Server. **Tools** Visual Studio,GitHub ,Sprachen :Mazedonisch,Deutsch,Englisch
