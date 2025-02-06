@@ -5,7 +5,7 @@
 - 📫 borchemladenovski21@gmail.com
 - 😄 Projekte an denen ich arbeite:
 - ERP.UI-System Anwendung zur Verwaltung von Mitarbeitern.
-- ⚡ Fun fact: ...
+- ⚡ 
 
 <!---
 Borche40/Borche40 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
