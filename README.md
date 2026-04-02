@@ -5,7 +5,7 @@
 - 💞️ Programmierung : C# .NET,WPF,XAML,MVVM,SQL Server,.NET Blazor **Tools** Visual Studio,GitHub ,
 - 📫 borchemladenovski21@gmail.com
 - 😄 Projekte an denen ich arbeite:
-- ERP.UI-System Anwendung zur Verwaltung von Mitarbeitern.
+- ERP.UI-System Anwendung .
 - ⚡ 
 
 <!---
