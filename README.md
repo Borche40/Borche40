@@ -1,6 +1,6 @@
 - 👋 Hallo ich bin Borche
 - Sprachen: Mazedonisch,Deutsch,Englisch.
-- 👀 Softwareentwickler mit Interesse an C#.NET WPF,XAML , MVVM,.NET Blazor*
+- 👀 Junior Softwareentwickler mit Interesse an C#.NET WPF,XAML , MVVM,.NET Blazor*
 - 🌱 **GitHub und Open-Source-Kollaboration**
 - 💞️ Programmierung : C# .NET,WPF,XAML,MVVM,SQL Server,.NET Blazor **Tools** Visual Studio,GitHub ,
 - 📫 borchemladenovski21@gmail.com
