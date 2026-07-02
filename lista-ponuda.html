@@ -1,283 +1,204 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="mk">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lista ponuda</title>
+  <title>Lista ponuda | Kuponi za prodazba</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #f6f8fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --primary: #2563eb;
-      --primary-soft: #dbeafe;
-      --success: #047857;
-      --border: #e5e7eb;
+      --bg: #f6f8fb; --card: #fff; --text: #172033; --muted: #667085;
+      --primary: #2563eb; --primary-dark: #1e40af; --primary-soft: #dbeafe;
+      --success: #047857; --success-soft: #d1fae5; --warning: #f59e0b;
+      --border: #e5e7eb; --shadow: 0 18px 45px rgba(15, 23, 42, .08);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #eff6ff 0%, var(--bg) 45%, #f8fafc 100%);
-      color: var(--text);
-    }
-
-    main {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 48px 0;
-    }
-
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 24px;
-      align-items: end;
-      margin-bottom: 28px;
-    }
-
-    .eyebrow {
-      color: var(--primary);
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      margin: 0 0 8px;
-      font-size: .8rem;
-    }
-
-    h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 1;
-      margin: 0;
-    }
-
-    .header-description {
-      max-width: 520px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin: 14px 0 0;
-    }
-
-    .coupon-count {
-      background: var(--primary-soft);
-      color: var(--primary);
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .coupon-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 22px;
-    }
-
-    .coupon-card {
-      overflow: hidden;
-      border-radius: 24px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
-
-    .coupon-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 24px 60px rgba(15, 23, 42, .12);
-    }
-
-    .coupon-image {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      display: block;
-    }
-
+    body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #eff6ff 0%, var(--bg) 45%, #f8fafc 100%); color: var(--text); }
+    button, input, select { font: inherit; }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 44px 0; }
+    .hero { display: grid; grid-template-columns: 1.4fr .8fr; gap: 28px; align-items: stretch; margin-bottom: 28px; }
+    .hero-panel, .summary-card, .toolbar, .coupon-card, .empty-state { background: rgba(255, 255, 255, .92); border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .hero-panel { border-radius: 30px; padding: clamp(24px, 5vw, 44px); }
+    .eyebrow { color: var(--primary); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 10px; font-size: .8rem; }
+    h1 { font-size: clamp(2.2rem, 6vw, 4.7rem); line-height: .95; margin: 0; letter-spacing: -.05em; }
+    .hero-description { max-width: 650px; color: var(--muted); line-height: 1.75; margin: 18px 0 0; font-size: 1.05rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+    .btn { border: 0; border-radius: 14px; padding: 12px 16px; cursor: pointer; font-weight: 800; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; text-decoration: none; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--primary); color: white; box-shadow: 0 12px 24px rgba(37, 99, 235, .24); }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: var(--primary-soft); color: var(--primary-dark); }
+    .btn-ghost { background: #f8fafc; color: var(--text); border: 1px solid var(--border); }
+    .summary-card { border-radius: 30px; padding: 28px; display: grid; align-content: center; gap: 18px; }
+    .summary-row { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .summary-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .summary-label { color: var(--muted); margin: 0; }
+    .summary-value { font-weight: 900; font-size: 1.45rem; margin: 4px 0 0; }
+    .toolbar { border-radius: 24px; padding: 18px; display: grid; grid-template-columns: 1fr 210px auto; gap: 12px; margin-bottom: 24px; position: sticky; top: 12px; z-index: 3; backdrop-filter: blur(14px); }
+    .field { width: 100%; border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; background: white; color: var(--text); outline: none; }
+    .field:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, .12); }
+    .coupon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
+    .coupon-card { overflow: hidden; border-radius: 24px; transition: transform .2s ease, box-shadow .2s ease; position: relative; }
+    .coupon-card:hover { transform: translateY(-4px); box-shadow: 0 24px 60px rgba(15, 23, 42, .12); }
+    .badge { position: absolute; top: 14px; left: 14px; z-index: 2; background: rgba(255, 255, 255, .92); color: var(--primary-dark); border-radius: 999px; padding: 7px 11px; font-size: .78rem; font-weight: 900; box-shadow: 0 10px 20px rgba(15, 23, 42, .12); }
+    .coupon-image { width: 100%; height: 190px; object-fit: cover; display: block; background: #e5e7eb; }
     .coupon-body { padding: 22px; }
-
-    .coupon-meta {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .coupon-category {
-      color: var(--primary);
-      background: var(--primary-soft);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: .78rem;
-      font-weight: 700;
-    }
-
-    .coupon-discount {
-      color: var(--success);
-      font-size: 1.25rem;
-      font-weight: 800;
-    }
-
-    .coupon-card h2 {
-      margin: 0 0 10px;
-      font-size: 1.25rem;
-    }
-
-    .coupon-card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .coupon-footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      border-top: 1px dashed var(--border);
-      margin-top: 20px;
-      padding-top: 18px;
-      font-size: .9rem;
-    }
-
-    .coupon-code {
-      font-weight: 800;
-      letter-spacing: .06em;
-      color: var(--text);
-    }
-
+    .coupon-meta { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px; }
+    .coupon-category { color: var(--primary); background: var(--primary-soft); border-radius: 999px; padding: 6px 10px; font-size: .78rem; font-weight: 800; }
+    .coupon-discount { color: var(--success); font-size: 1.35rem; font-weight: 950; }
+    .coupon-card h2 { margin: 0 0 10px; font-size: 1.25rem; }
+    .coupon-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .coupon-footer { display: grid; gap: 12px; border-top: 1px dashed var(--border); margin-top: 20px; padding-top: 18px; }
+    .coupon-info { display: flex; justify-content: space-between; gap: 12px; align-items: center; font-size: .92rem; }
+    .coupon-code { font-weight: 900; letter-spacing: .08em; color: var(--text); background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 8px 10px; }
     .coupon-validity { color: var(--muted); }
-
-    @media (max-width: 720px) {
-      main { padding: 32px 0; }
-
-      .page-header {
-        display: block;
-      }
-
-      .coupon-count {
-        display: inline-block;
-        margin-top: 18px;
-      }
-    }
+    .coupon-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .empty-state { border-radius: 24px; padding: 32px; text-align: center; color: var(--muted); display: none; }
+    .toast { position: fixed; right: 18px; bottom: 18px; background: #111827; color: white; border-radius: 14px; padding: 13px 16px; box-shadow: 0 20px 45px rgba(0, 0, 0, .22); opacity: 0; transform: translateY(16px); pointer-events: none; transition: .22s ease; z-index: 10; }
+    .toast.is-visible { opacity: 1; transform: translateY(0); }
+    .modal { position: fixed; inset: 0; display: none; place-items: center; background: rgba(15, 23, 42, .54); padding: 20px; z-index: 20; }
+    .modal.is-open { display: grid; }
+    .modal-card { width: min(520px, 100%); background: white; border-radius: 26px; padding: 26px; box-shadow: 0 28px 80px rgba(15, 23, 42, .28); }
+    .modal-card h2 { margin: 0 0 10px; }
+    .modal-card p { color: var(--muted); line-height: 1.7; }
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    @media (max-width: 820px) { .hero { grid-template-columns: 1fr; } .toolbar { grid-template-columns: 1fr; position: static; } .coupon-actions { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <main>
-    <header class="page-header">
-      <div>
+    <section class="hero" aria-label="Uvod za Lista ponuda">
+      <div class="hero-panel">
         <p class="eyebrow">Aktuelne akcije</p>
         <h1>Lista ponuda</h1>
-        <p class="header-description">
-          Pregled dostupnih kupona sa slikom, popustom, kodom i osnovnim informacijama za brzu proveru ponude.
-        </p>
+        <p class="hero-description">Gotova prodazna stranica za kuponi: prebaruvanje, filtriranje, kopiranje kod i akcija za iskoristuvanje na ponudata bez backend.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#kuponi">Vidi kuponi</a>
+          <button class="btn btn-secondary" type="button" data-scroll-search>Prebaraj ponuda</button>
+        </div>
       </div>
-      <span class="coupon-count">6 kupona</span>
-    </header>
+      <aside class="summary-card" aria-label="Kratka statistika">
+        <div class="summary-row"><div><p class="summary-label">Dostapni kuponi</p><p class="summary-value" id="totalCoupons">6</p></div><span>🎟️</span></div>
+        <div class="summary-row"><div><p class="summary-label">Najgolem popust</p><p class="summary-value">40%</p></div><span>🔥</span></div>
+        <div class="summary-row"><div><p class="summary-label">Status</p><p class="summary-value">Aktivno</p></div><span>✅</span></div>
+      </aside>
+    </section>
 
-    <section class="coupon-grid" aria-label="Lista kupona">
-      <article class="coupon-card">
-        <img class="coupon-image" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80" alt="Sveže namirnice u korpi" />
-        <div class="coupon-body">
-          <div class="coupon-meta">
-            <span class="coupon-category">Market</span>
-            <span class="coupon-discount">-20%</span>
-          </div>
-          <h2>Popust na nedeljnu kupovinu</h2>
-          <p>Iskoristi kupon za osnovne namirnice i proizvode za domaćinstvo.</p>
-          <div class="coupon-footer">
-            <span class="coupon-code">SHOP20</span>
-            <span class="coupon-validity">Važi do 31.07.</span>
-          </div>
-        </div>
+    <section class="toolbar" aria-label="Alatki za kuponi">
+      <input id="searchInput" class="field" type="search" placeholder="Prebaraj po ime, kategorija ili kod..." aria-label="Prebaraj kuponi" />
+      <select id="categoryFilter" class="field" aria-label="Filtriraj po kategorija">
+        <option value="all">Site kategorii</option>
+        <option value="Market">Market</option>
+        <option value="Moda">Moda</option>
+        <option value="Tehnika">Tehnika</option>
+        <option value="Restoran">Restoran</option>
+        <option value="Putuvanja">Putuvanja</option>
+        <option value="Fitness">Fitness</option>
+      </select>
+      <button class="btn btn-ghost" type="button" id="resetFilters">Reset</button>
+    </section>
+
+    <section id="kuponi" class="coupon-grid" aria-label="Lista kuponi">
+      <article class="coupon-card" data-category="Market" data-title="Popust na nedelna kupovina" data-code="SHOP20">
+        <span class="badge">Najbarano</span><img class="coupon-image" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80" alt="Svezi namirnici vo korpa" />
+        <div class="coupon-body"><div class="coupon-meta"><span class="coupon-category">Market</span><span class="coupon-discount">-20%</span></div><h2>Popust na nedelna kupovina</h2><p>Iskoristi kupon za osnovni namirnici i proizvodi za domakinstvo.</p><div class="coupon-footer"><div class="coupon-info"><span class="coupon-code">SHOP20</span><span class="coupon-validity">Vazi do 31.07.</span></div><div class="coupon-actions"><button class="btn btn-secondary" type="button" data-copy="SHOP20">Kopiraj kod</button><button class="btn btn-primary" type="button" data-use="Popust na nedelna kupovina" data-code="SHOP20">Iskoristi</button></div></div></div>
       </article>
-
-      <article class="coupon-card">
-        <img class="coupon-image" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80" alt="Prodavnica odeće" />
-        <div class="coupon-body">
-          <div class="coupon-meta">
-            <span class="coupon-category">Moda</span>
-            <span class="coupon-discount">-35%</span>
-          </div>
-          <h2>Nova sezonska kolekcija</h2>
-          <p>Popust za odabrane artikle iz letnje kolekcije odeće i obuće.</p>
-          <div class="coupon-footer">
-            <span class="coupon-code">MODA35</span>
-            <span class="coupon-validity">Važi do 15.08.</span>
-          </div>
-        </div>
+      <article class="coupon-card" data-category="Moda" data-title="Nova sezonska kolekcija" data-code="MODA35">
+        <span class="badge">Limited</span><img class="coupon-image" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80" alt="Prodavnica za obleka" />
+        <div class="coupon-body"><div class="coupon-meta"><span class="coupon-category">Moda</span><span class="coupon-discount">-35%</span></div><h2>Nova sezonska kolekcija</h2><p>Popust za odbrani artikli od letnata kolekcija obleka i obuvki.</p><div class="coupon-footer"><div class="coupon-info"><span class="coupon-code">MODA35</span><span class="coupon-validity">Vazi do 15.08.</span></div><div class="coupon-actions"><button class="btn btn-secondary" type="button" data-copy="MODA35">Kopiraj kod</button><button class="btn btn-primary" type="button" data-use="Nova sezonska kolekcija" data-code="MODA35">Iskoristi</button></div></div></div>
       </article>
-
-      <article class="coupon-card">
-        <img class="coupon-image" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="Laptop na radnom stolu" />
-        <div class="coupon-body">
-          <div class="coupon-meta">
-            <span class="coupon-category">Tehnika</span>
-            <span class="coupon-discount">-15%</span>
-          </div>
-          <h2>Ušteda na elektronici</h2>
-          <p>Kupon za laptopove, dodatnu opremu i pametne uređaje.</p>
-          <div class="coupon-footer">
-            <span class="coupon-code">TECH15</span>
-            <span class="coupon-validity">Važi do 10.08.</span>
-          </div>
-        </div>
+      <article class="coupon-card" data-category="Tehnika" data-title="Usteda na elektronika" data-code="TECH15">
+        <span class="badge">Online</span><img class="coupon-image" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80" alt="Laptop na rabotna masa" />
+        <div class="coupon-body"><div class="coupon-meta"><span class="coupon-category">Tehnika</span><span class="coupon-discount">-15%</span></div><h2>Usteda na elektronika</h2><p>Kupon za laptopi, dodatna oprema i pametni uredi.</p><div class="coupon-footer"><div class="coupon-info"><span class="coupon-code">TECH15</span><span class="coupon-validity">Vazi do 10.08.</span></div><div class="coupon-actions"><button class="btn btn-secondary" type="button" data-copy="TECH15">Kopiraj kod</button><button class="btn btn-primary" type="button" data-use="Usteda na elektronika" data-code="TECH15">Iskoristi</button></div></div></div>
       </article>
-
-      <article class="coupon-card">
-        <img class="coupon-image" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80" alt="Servirana hrana u restoranu" />
-        <div class="coupon-body">
-          <div class="coupon-meta">
-            <span class="coupon-category">Restoran</span>
-            <span class="coupon-discount">-25%</span>
-          </div>
-          <h2>Večera za dvoje</h2>
-          <p>Rezerviši sto i ostvari popust na kompletan račun u restoranu.</p>
-          <div class="coupon-footer">
-            <span class="coupon-code">DINNER25</span>
-            <span class="coupon-validity">Važi do 20.07.</span>
-          </div>
-        </div>
+      <article class="coupon-card" data-category="Restoran" data-title="Vecera za dvajca" data-code="DINNER25">
+        <span class="badge">Popularno</span><img class="coupon-image" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80" alt="Servirana hrana vo restoran" />
+        <div class="coupon-body"><div class="coupon-meta"><span class="coupon-category">Restoran</span><span class="coupon-discount">-25%</span></div><h2>Vecera za dvajca</h2><p>Rezerviraj masa i ostvari popust na kompletna smetka vo restoran.</p><div class="coupon-footer"><div class="coupon-info"><span class="coupon-code">DINNER25</span><span class="coupon-validity">Vazi do 20.07.</span></div><div class="coupon-actions"><button class="btn btn-secondary" type="button" data-copy="DINNER25">Kopiraj kod</button><button class="btn btn-primary" type="button" data-use="Vecera za dvajca" data-code="DINNER25">Iskoristi</button></div></div></div>
       </article>
-
-      <article class="coupon-card">
-        <img class="coupon-image" src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=900&q=80" alt="Putovanje avionom" />
-        <div class="coupon-body">
-          <div class="coupon-meta">
-            <span class="coupon-category">Putovanja</span>
-            <span class="coupon-discount">-30%</span>
-          </div>
-          <h2>Letnji odmor</h2>
-          <p>Specijalna ponuda za hotelski smeštaj i vikend aranžmane.</p>
-          <div class="coupon-footer">
-            <span class="coupon-code">TRAVEL30</span>
-            <span class="coupon-validity">Važi do 01.09.</span>
-          </div>
-        </div>
+      <article class="coupon-card" data-category="Putuvanja" data-title="Leten odmor" data-code="TRAVEL30">
+        <span class="badge">Top ponuda</span><img class="coupon-image" src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=900&q=80" alt="Patuvanje so avion" />
+        <div class="coupon-body"><div class="coupon-meta"><span class="coupon-category">Putuvanja</span><span class="coupon-discount">-30%</span></div><h2>Leten odmor</h2><p>Specijalna ponuda za hotelsko smestuvanje i vikend aranzmani.</p><div class="coupon-footer"><div class="coupon-info"><span class="coupon-code">TRAVEL30</span><span class="coupon-validity">Vazi do 01.09.</span></div><div class="coupon-actions"><button class="btn btn-secondary" type="button" data-copy="TRAVEL30">Kopiraj kod</button><button class="btn btn-primary" type="button" data-use="Leten odmor" data-code="TRAVEL30">Iskoristi</button></div></div></div>
       </article>
-
-      <article class="coupon-card">
-        <img class="coupon-image" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80" alt="Teretana sa opremom za vežbanje" />
-        <div class="coupon-body">
-          <div class="coupon-meta">
-            <span class="coupon-category">Fitness</span>
-            <span class="coupon-discount">-40%</span>
-          </div>
-          <h2>Mesečna članarina</h2>
-          <p>Popust za nove članove na grupne treninge i korišćenje teretane.</p>
-          <div class="coupon-footer">
-            <span class="coupon-code">FIT40</span>
-            <span class="coupon-validity">Važi do 31.08.</span>
-          </div>
-        </div>
+      <article class="coupon-card" data-category="Fitness" data-title="Mesecna clanarina" data-code="FIT40">
+        <span class="badge">Najgolem popust</span><img class="coupon-image" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80" alt="Teretana so oprema za vezbanje" />
+        <div class="coupon-body"><div class="coupon-meta"><span class="coupon-category">Fitness</span><span class="coupon-discount">-40%</span></div><h2>Mesecna clanarina</h2><p>Popust za novi clenovi na grupni treninzi i koristenje teretana.</p><div class="coupon-footer"><div class="coupon-info"><span class="coupon-code">FIT40</span><span class="coupon-validity">Vazi do 31.08.</span></div><div class="coupon-actions"><button class="btn btn-secondary" type="button" data-copy="FIT40">Kopiraj kod</button><button class="btn btn-primary" type="button" data-use="Mesecna clanarina" data-code="FIT40">Iskoristi</button></div></div></div>
       </article>
     </section>
+    <div class="empty-state" id="emptyState">Nema kuponi za izbraniot filter. Probaj druga kategorija ili prebaruvanje.</div>
   </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal" id="useModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <h2 id="modalTitle">Kuponot e spreman</h2>
+      <p id="modalText"></p>
+      <p><strong>Prodazna verzija:</strong> ovde moze da se povrze checkout, kontakt forma ili backend API koga ke imas server.</p>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" id="copyFromModal">Kopiraj kod</button><button class="btn btn-ghost" type="button" id="closeModal">Zatvori</button></div>
+    </div>
+  </div>
+
+  <script>
+    const cards = Array.from(document.querySelectorAll('.coupon-card'));
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const resetFilters = document.getElementById('resetFilters');
+    const emptyState = document.getElementById('emptyState');
+    const toast = document.getElementById('toast');
+    const modal = document.getElementById('useModal');
+    const modalText = document.getElementById('modalText');
+    const copyFromModal = document.getElementById('copyFromModal');
+    const closeModal = document.getElementById('closeModal');
+    let activeCode = '';
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('is-visible');
+      window.setTimeout(() => toast.classList.remove('is-visible'), 2200);
+    }
+
+    function copyCode(code) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(() => showToast(`Kodot ${code} e kopiran.`));
+      } else {
+        const temp = document.createElement('textarea');
+        temp.value = code;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        temp.remove();
+        showToast(`Kodot ${code} e kopiran.`);
+      }
+    }
+
+    function filterCoupons() {
+      const search = searchInput.value.trim().toLowerCase();
+      const category = categoryFilter.value;
+      let visible = 0;
+      cards.forEach((card) => {
+        const text = `${card.dataset.title} ${card.dataset.category} ${card.dataset.code}`.toLowerCase();
+        const matchesSearch = !search || text.includes(search);
+        const matchesCategory = category === 'all' || card.dataset.category === category;
+        const shouldShow = matchesSearch && matchesCategory;
+        card.style.display = shouldShow ? '' : 'none';
+        if (shouldShow) visible += 1;
+      });
+      emptyState.style.display = visible ? 'none' : 'block';
+    }
+
+    document.querySelectorAll('[data-copy]').forEach((button) => button.addEventListener('click', () => copyCode(button.dataset.copy)));
+    document.querySelectorAll('[data-use]').forEach((button) => button.addEventListener('click', () => {
+      activeCode = button.dataset.code;
+      modalText.textContent = `Izbrana ponuda: ${button.dataset.use}. Iskoristi go kodot ${activeCode} pri naracka ili isprati go do prodazba.`;
+      modal.classList.add('is-open');
+    }));
+    copyFromModal.addEventListener('click', () => copyCode(activeCode));
+    closeModal.addEventListener('click', () => modal.classList.remove('is-open'));
+    modal.addEventListener('click', (event) => { if (event.target === modal) modal.classList.remove('is-open'); });
+    searchInput.addEventListener('input', filterCoupons);
+    categoryFilter.addEventListener('change', filterCoupons);
+    resetFilters.addEventListener('click', () => { searchInput.value = ''; categoryFilter.value = 'all'; filterCoupons(); });
+    document.querySelector('[data-scroll-search]').addEventListener('click', () => searchInput.focus());
+  </script>
 </body>
 </html>

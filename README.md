@@ -21,7 +21,7 @@ Ako sakas da ja vidis na tvoj kompjuter:
 3. Snimi ja stranicata so **Save as** kako `lista-ponuda.html`.
 4. Otvori ja so dvoen klik vo browser.
 
-Stranicata prikazuva kuponi so slika, popust, kategorija, kratok opis, kod i datum do koga vazi ponudata.
+Stranicata prikazuva kuponi so slika, popust, kategorija, kratok opis, kod i datum do koga vazi ponudata. Dodadeni se i prodazni frontend funkcii: prebaruvanje, filter po kategorija, kopiranje kod i kopce za iskoristuvanje kupon.
 
 <!---
 Borche40/Borche40 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
