@@ -1,0 +1,4 @@
+@page "/audit"
+@inject IAdminDataService Admin
+<h1>Audit-Protokoll</h1>@if(items.Count==0){<div class="card">Noch keine Audit-Einträge vorhanden.</div>}else{<table><thead><tr><th>Zeitpunkt</th><th>Aktion</th><th>Entität</th><th>Entitäts-ID</th><th>Benutzer</th></tr></thead><tbody>@foreach(var x in items){<tr><td>@x.CreatedAtUtc</td><td>@x.Action</td><td>@x.EntityName</td><td>@x.EntityId</td><td>@x.UserId</td></tr>}</tbody></table>}
+@code{List<AuditLog> items=[];protected override async Task OnInitializedAsync()=>items=(await Admin.GetAuditLogsAsync(default)).ToList();}

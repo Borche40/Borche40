@@ -1,0 +1,4 @@
+using IptvManagement.Application.Abstractions; using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.RateLimiting;
+namespace IptvManagement.Api.Controllers;
+[ApiController][Route("api/playlists")]
+public class PlaylistsController(IPlaylistService service):ControllerBase{ [HttpGet("{token}/playlist.m3u")][EnableRateLimiting("playlist")] public async Task<IActionResult> Get(string token,[FromQuery]string? deviceId,CancellationToken ct){ var result=await service.GenerateAsync(token,deviceId,HttpContext.Connection.RemoteIpAddress?.ToString(),Request.Headers.UserAgent.ToString(),ct); if(!result.Success) return StatusCode(result.StatusCode,Problem(title:"Zugriff verweigert",statusCode:result.StatusCode)); return File(System.Text.Encoding.UTF8.GetBytes(result.Content!),"audio/x-mpegurl","playlist.m3u"); }}
