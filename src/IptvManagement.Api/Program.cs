@@ -1,4 +1,52 @@
-using IptvManagement.Infrastructure; using IptvManagement.Infrastructure.Data; using IptvManagement.Infrastructure.Identity; using Microsoft.AspNetCore.Identity; using Microsoft.AspNetCore.RateLimiting; using Serilog; using System.Threading.RateLimiting;
-var builder=WebApplication.CreateBuilder(args); builder.Host.UseSerilog((ctx,lc)=>lc.ReadFrom.Configuration(ctx.Configuration).WriteTo.Console()); builder.Services.AddInfrastructure(builder.Configuration); builder.Services.AddControllers(); builder.Services.AddEndpointsApiExplorer(); builder.Services.AddSwaggerGen(); builder.Services.AddProblemDetails(); builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>(); builder.Services.AddRateLimiter(o=>o.AddFixedWindowLimiter("playlist",l=>{l.PermitLimit=60;l.Window=TimeSpan.FromMinutes(1);l.QueueLimit=0;l.QueueProcessingOrder=QueueProcessingOrder.OldestFirst;})); builder.Services.AddAuthorization(o=>{o.AddPolicy("ManageContent",p=>p.RequireRole("Administrator","Mitarbeiter"));o.AddPolicy("ReadOnly",p=>p.RequireRole("Administrator","Mitarbeiter","Reseller","NurLesen"));});
-var app=builder.Build(); app.UseExceptionHandler(); app.UseHsts(); app.UseHttpsRedirection(); app.Use(async(ctx,next)=>{ctx.Response.Headers.ContentSecurityPolicy="default-src 'self'; frame-ancestors 'none'";ctx.Response.Headers.XContentTypeOptions="nosniff";ctx.Response.Headers.ReferrerPolicy="no-referrer";await next();}); app.UseSerilogRequestLogging(); app.UseSwagger(); app.UseSwaggerUI(); app.UseAuthentication(); app.UseAuthorization(); app.UseRateLimiter(); app.MapHealthChecks("/health"); app.MapControllers(); await SeedAsync(app); app.Run();
-static async Task SeedAsync(WebApplication app){ using var scope=app.Services.CreateScope(); var roles=scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(); foreach(var role in new[]{"Administrator","Mitarbeiter","Reseller","NurLesen"}) if(!await roles.RoleExistsAsync(role)) await roles.CreateAsync(new IdentityRole(role)); var users=scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(); var cfg=scope.ServiceProvider.GetRequiredService<IConfiguration>(); var email=cfg["InitialAdmin:Email"]; var password=cfg["InitialAdmin:Password"]; if(!string.IsNullOrWhiteSpace(email)&&!string.IsNullOrWhiteSpace(password)&&await users.FindByEmailAsync(email) is null){ var user=new ApplicationUser{UserName=email,Email=email,EmailConfirmed=true,FirstName="System",LastName="Administrator"}; var result=await users.CreateAsync(user,password); if(result.Succeeded) await users.AddToRoleAsync(user,"Administrator"); }} public partial class Program{}
+using System.Threading.RateLimiting;
+using IptvManagement.Infrastructure;
+using IptvManagement.Infrastructure.Data;
+using IptvManagement.Infrastructure.Startup;
+using Microsoft.AspNetCore.RateLimiting;
+using Serilog;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog((context, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(context.Configuration).WriteTo.Console());
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddProblemDetails();
+builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
+builder.Services.AddRateLimiter(options => options.AddFixedWindowLimiter("playlist", limiterOptions =>
+{
+    limiterOptions.PermitLimit = 60;
+    limiterOptions.Window = TimeSpan.FromMinutes(1);
+    limiterOptions.QueueLimit = 0;
+    limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+}));
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ManageContent", policy => policy.RequireRole("Administrator", "Mitarbeiter"));
+    options.AddPolicy("ReadOnly", policy => policy.RequireRole("Administrator", "Mitarbeiter", "Reseller", "NurLesen"));
+});
+
+var app = builder.Build();
+await DatabaseInitializer.InitializeAsync(app.Services, app.Environment);
+
+app.UseExceptionHandler();
+app.UseHsts();
+app.UseHttpsRedirection();
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.ContentSecurityPolicy = "default-src 'self'; frame-ancestors 'none'";
+    context.Response.Headers.XContentTypeOptions = "nosniff";
+    context.Response.Headers.ReferrerPolicy = "no-referrer";
+    await next();
+});
+app.UseSerilogRequestLogging();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseRateLimiter();
+app.MapHealthChecks("/health");
+app.MapControllers();
+app.Run();
+
+public partial class Program { }

@@ -165,8 +165,8 @@ public sealed class DashboardService(AppDbContext db) : IDashboardService
             await db.Subscriptions.CountAsync(subscription => subscription.Status == SubscriptionStatus.Active && subscription.ExpirationDateUtc > now, cancellationToken),
             await db.Subscriptions.CountAsync(subscription => subscription.ExpirationDateUtc <= now.AddDays(30) && subscription.ExpirationDateUtc > now, cancellationToken),
             await db.Subscriptions.CountAsync(subscription => subscription.ExpirationDateUtc <= now, cancellationToken),
-            await db.Payments.Where(payment => payment.Status == PaymentStatus.Paid && payment.PaymentDateUtc >= monthStart).SumAsync(payment => payment.Amount, cancellationToken),
-            await db.Payments.Where(payment => payment.Status == PaymentStatus.Open).SumAsync(payment => payment.Amount, cancellationToken),
+            await db.Payments.Where(payment => payment.Status == PaymentStatus.Paid && payment.PaymentDateUtc >= monthStart).SumAsync(payment => (decimal?)payment.Amount, cancellationToken) ?? 0m,
+            await db.Payments.Where(payment => payment.Status == PaymentStatus.Open).SumAsync(payment => (decimal?)payment.Amount, cancellationToken) ?? 0m,
             await db.Devices.CountAsync(device => device.IsActive, cancellationToken),
             await db.Devices.CountAsync(device => device.IsBlocked, cancellationToken),
             await db.Channels.CountAsync(channel => channel.IsActive, cancellationToken),
@@ -192,7 +192,7 @@ public sealed class DashboardService(AppDbContext db) : IDashboardService
         var monthly = await db.Payments
             .Where(payment => payment.Status == PaymentStatus.Paid && payment.PaymentDateUtc >= start)
             .GroupBy(payment => new { payment.PaymentDateUtc.Year, payment.PaymentDateUtc.Month })
-            .Select(group => new { group.Key.Year, group.Key.Month, Amount = group.Sum(payment => payment.Amount) })
+            .Select(group => new { group.Key.Year, group.Key.Month, Amount = group.Sum(payment => (decimal?)payment.Amount) ?? 0m })
             .ToListAsync(cancellationToken);
 
         return Enumerable.Range(0, 12)
