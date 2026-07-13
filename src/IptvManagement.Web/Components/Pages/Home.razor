@@ -1,0 +1,6 @@
+@page "/"
+@inject IptvManagement.Application.Abstractions.IDashboardService DashboardService
+<PageTitle>Dashboard</PageTitle>
+<h1>Dashboard</h1>
+@if (model is null){<p class="loading">Daten werden geladen …</p>} else {<section class="grid"><article><span>Kunden</span><strong>@model.TotalCustomers</strong></article><article><span>Aktive Abos</span><strong>@model.ActiveSubscriptions</strong></article><article><span>Monatliche Einnahmen</span><strong>@model.MonthlyRevenue.ToString("C")</strong></article><article><span>Aktive Sender</span><strong>@model.ActiveChannels</strong></article></section><h2>Läuft bald ab</h2><table><thead><tr><th>Nummer</th><th>Ablauf</th><th>Status</th></tr></thead><tbody>@foreach(var s in model.ExpiringIn30Days){<tr><td>@s.SubscriptionNumber</td><td>@s.ExpirationDateUtc.ToLocalTime()</td><td>@s.Status</td></tr>}</tbody></table>}
+@code { IptvManagement.Application.DTOs.DashboardDto? model; protected override async Task OnInitializedAsync()=>model=await DashboardService.GetAsync(CancellationToken.None); }

@@ -1,0 +1,4 @@
+using IptvManagement.Application.Abstractions; using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.Mvc;
+namespace IptvManagement.Api.Controllers;
+[ApiController][Route("api/subscriptions")][Authorize]
+public class SubscriptionsController(ISubscriptionService subscriptions):ControllerBase{ [HttpPost("{id:guid}/token")][Authorize(Policy="ManageContent")] public async Task<IActionResult> Token(Guid id,CancellationToken ct)=>Ok(await subscriptions.IssuePlaylistTokenAsync(id,ct)); [HttpPost("{id:guid}/renew/{months:int}")][Authorize(Policy="ManageContent")] public async Task<IActionResult> Renew(Guid id,int months,CancellationToken ct){ await subscriptions.RenewAsync(id,months,User.Identity?.Name,ct); return NoContent(); } [HttpDelete("{id:guid}/token")][Authorize(Policy="ManageContent")] public async Task<IActionResult> Revoke(Guid id,CancellationToken ct){ await subscriptions.RevokePlaylistTokenAsync(id,ct); return NoContent(); }}

@@ -1,0 +1,4 @@
+using IptvManagement.Application.Abstractions; using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.RateLimiting;
+namespace IptvManagement.Api.Controllers;
+[ApiController][Route("api/streams")]
+public class StreamsController(IPlaylistService service):ControllerBase{ [HttpGet("{channelId:guid}")][EnableRateLimiting("playlist")] public async Task<IActionResult> Get(Guid channelId,[FromQuery]string accessToken,CancellationToken ct){ var result=await service.ValidateStreamAccessAsync(channelId,accessToken,HttpContext.Connection.RemoteIpAddress?.ToString(),ct); if(!result.Success) return StatusCode(result.StatusCode,Problem(title:"Zugriff verweigert",statusCode:result.StatusCode)); return Ok(new{message="Zugriff validiert. In Produktion erzeugt die Medien-Infrastruktur eine kurzlebige Signed URL oder liefert über Reverse Proxy/CDN aus.",signedUrl=result.SignedUrl}); }}

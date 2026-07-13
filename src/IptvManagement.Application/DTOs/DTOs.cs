@@ -1,0 +1,16 @@
+using IptvManagement.Domain.Enums;
+namespace IptvManagement.Application.DTOs;
+public record CustomerDto(Guid Id,string CustomerNumber,string FirstName,string LastName,string? CompanyName,string Email,bool IsActive,bool IsBlocked);
+public record CustomerUpsertDto(string CustomerNumber,string FirstName,string LastName,string? CompanyName,string Email,string? Phone,string? Address,string? PostalCode,string? City,string Country,string? Notes);
+public record PackageDto(Guid Id,string Name,string? Description,decimal Price,string Currency,int DurationInMonths,int MaxDevices,bool IsActive,int ChannelCount);
+public record PackageUpsertDto(string Name,string? Description,decimal Price,string Currency,int DurationInMonths,int MaxDevices,IReadOnlyCollection<Guid> ChannelIds);
+public record ChannelDto(Guid Id,string Name,string? Description,string? LogoUrl,Guid CategoryId,string CategoryName,string CountryCode,string LanguageCode,int SortOrder,bool IsActive,bool IsPubliclyAvailable,string LicenseReference,DateTime? LicenseValidUntilUtc);
+public record ChannelUpsertDto(string Name,string? Description,string StreamUrl,string? LogoUrl,Guid CategoryId,string CountryCode,string LanguageCode,int SortOrder,bool IsPubliclyAvailable,string LicenseReference,DateTime? LicenseValidUntilUtc);
+public record CategoryDto(Guid Id,string Name,string? Description,int SortOrder,bool IsActive);
+public record SubscriptionDto(Guid Id,Guid CustomerId,Guid PackageId,string SubscriptionNumber,DateTime StartDateUtc,DateTime ExpirationDateUtc,SubscriptionStatus Status,int MaxDevices,bool AutomaticRenewal);
+public record SubscriptionCreateDto(Guid CustomerId,Guid PackageId,DateTime StartDateUtc,int? DurationInMonths,int? MaxDevices,bool AutomaticRenewal);
+public record DeviceDto(Guid Id,Guid CustomerId,Guid SubscriptionId,string DeviceName,DeviceType DeviceType,string? LastIpAddress,DateTime FirstSeenAtUtc,DateTime? LastSeenAtUtc,bool IsActive,bool IsBlocked);
+public record PaymentDto(Guid Id,Guid CustomerId,Guid SubscriptionId,string PaymentNumber,decimal Amount,string Currency,PaymentMethod PaymentMethod,DateTime PaymentDateUtc,PaymentStatus Status,string? Reference);
+public record InvoiceDto(Guid Id,Guid CustomerId,Guid SubscriptionId,string InvoiceNumber,DateTime InvoiceDateUtc,DateTime DueDateUtc,decimal NetAmount,decimal TaxAmount,decimal GrossAmount,string Currency,InvoiceStatus Status,string? PdfFilePath);
+public record AuditLogDto(Guid Id,string? UserId,string Action,string EntityName,string? EntityId,string? IpAddress,DateTime CreatedAtUtc);
+public record DashboardDto(int TotalCustomers,int ActiveCustomers,int BlockedCustomers,int ActiveSubscriptions,int ExpiringSoonSubscriptions,int ExpiredSubscriptions,decimal MonthlyRevenue,decimal OpenPayments,int ActiveDevices,int BlockedDevices,int ActiveChannels,IReadOnlyList<SubscriptionDto> ExpiringIn7Days,IReadOnlyList<SubscriptionDto> ExpiringIn30Days,IReadOnlyList<PaymentDto> LastPayments,IReadOnlyList<AuditLogDto> LastActivities,IReadOnlyList<decimal> RevenueByMonth);
