@@ -1,0 +1,19 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${IPTV_SQL_PASSWORD}"
+    ports: ["1433:1433"]
+    volumes: ["sqlserver-data:/var/opt/mssql"]
+  api:
+    build: .
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=IptvManagement;User Id=sa;Password=${IPTV_SQL_PASSWORD};TrustServerCertificate=True;Encrypt=True"
+      InitialAdmin__Email: "${IPTV_ADMIN_EMAIL}"
+      InitialAdmin__Password: "${IPTV_ADMIN_PASSWORD}"
+    ports: ["8080:8080"]
+    depends_on: [sqlserver]
+volumes:
+  sqlserver-data:
